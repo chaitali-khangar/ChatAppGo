@@ -34,7 +34,11 @@ func sendChat(receiverHandle api.Handle, message string) {
 
 	var req api.ChatRequest
 	// TODO-WORKSHOP-STEP-8: Create req struct of type api.ChatRequest to send to client.Chat method
-
+	req = api.ChatRequest {
+			From: &MyHandle,
+			To: &receiverHandle,
+			Message: message,
+	}
 	_, err = chatClient.Chat(ctx, &req)
 	if err != nil {
 		log.Printf("ERROR: Chat(): %v", err)
@@ -42,3 +46,4 @@ func sendChat(receiverHandle api.Handle, message string) {
 	}
 	return
 }
+

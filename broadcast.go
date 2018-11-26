@@ -48,7 +48,7 @@ func broadcastOwnHandle(wg *sync.WaitGroup) {
 	defer wg.Done()
 
 	// Broadcast immediately at the start
-	broadcastIsAlive()
+	broadcastIsAlive()broadcastOwnHandle
 
 	ticker := time.NewTicker(time.Second * 10)
 	defer ticker.Stop()

@@ -4,10 +4,10 @@ import (
 	"bufio"
 	"flag"
 	"fmt"
+	"errors"
 	"os"
 	"strings"
 	"sync"
-
 	"github.com/gautamrege/gochat/api"
 )
 
@@ -29,13 +29,33 @@ var USERS = PeerHandleMapSync{
 	PeerHandleMap: make(map[string]api.Handle),
 }
 
+func invalidUser(name string, host string) error{
+	if(name == "" || host == ""){
+		return errors.New("Please enter name and host")
+	}
+	return nil
+}
+
 func main() {
 	// Parse flags for host, port and name
 	flag.Parse()
 
 	// TODO-WORKSHOP-STEP-1: If the name and host are empty, return an error with help message
+   	error := invalidUser(*name,*host)
+
+	if error != nil {
+		fmt.Println(error)
+		os.Exit(1)
+	}
+
 
 	// TODO-WORKSHOP-STEP-2: Initialize global MyHandle of type api.Handle
+	
+	MyHandle = api.Handle{
+		Host: *host,
+		Port: int32(*port),
+		Name: *name,
+	}
 
 	var wg sync.WaitGroup
 	wg.Add(3)
@@ -82,7 +102,18 @@ func parseAndExecInput(input string) {
 		// TODO-WORKSHOP-STEP-9: Write code to sendChat. Example
 		// "@gautam hello golang" should send a message to handle with name "gautam" and message "hello golang"
 		// Invoke sendChat to send the  message
+		_,ok := USERS.Get(cmd[1:])
+		if(ok){
+			sendChat(USERS.PeerHandleMap[cmd[1:]],tokens[1])
+		}else{
+			fmt.Println("User not exist")
+		}
+		
 		break
+	case strings.ToLower(cmd) == "/all":
+	  for key, _ := range USERS.PeerHandleMap {
+	    sendChat(USERS.PeerHandleMap[key],tokens[1])
+	  }
 	case strings.ToLower(cmd) == "/help":
 		fmt.Println(helpStr)
 		break
